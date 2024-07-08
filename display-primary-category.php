@@ -53,7 +53,8 @@ function save_primary_category_meta_data($post_id) {
 add_action('save_post', 'save_primary_category_meta_data');
 
 
-// Follow these steps to show the selected category on front end
+ 
+// Use Code to show the selected Primary Category on front end
 // To display the primary category on the front end, you can add the following code to your theme's template files, such as single.php or content.php.
 $primary_category_id = get_post_meta(get_the_ID(), '_primary_category', true);
 if ($primary_category_id) {
@@ -63,5 +64,27 @@ if ($primary_category_id) {
     }
 }
 
-  
+
+    
+    // Show the selected Primary Category on front end without adding any code
+    // this code can be added either in theme's function.php file or you can also create a new file in /plugins/ folder
+    // Filter the category list to display only the primary category
+function filter_the_category_list($thelist, $separator = '', $parents = '', $post_id = false) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+
+    // Get the primary category ID
+    $primary_category_id = get_post_meta($post_id, '_primary_category', true);
+
+    if ($primary_category_id) {
+        $primary_category = get_category($primary_category_id);
+        if ($primary_category) {
+            return '<a href="' . get_category_link($primary_category->term_id) . '">' . esc_html($primary_category->name) . '</a>';
+        }
+    }
+
+    return ''; // Return an empty string if no primary category is set
+}
+add_filter('the_category', 'filter_the_category_list', 10, 4);
 ?>
